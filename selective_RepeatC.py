@@ -29,34 +29,39 @@ def Main():
 					# print "first index"+str(index)
 					totalRecv = 0
 					# flag = 1
+
 					while totalRecv < filesize:
 						#if flag == 0:
-						index,addr=sock.recvfrom(8)				#receives the ID of each packet
-						data, addr = sock.recvfrom(512)			#receives the packet itself
-						totalRecv += len(data)
-						randpacket = randint(0, 9)
+							index,addr=sock.recvfrom(8)				#receives the ID of each packet
+							data, addr = sock.recvfrom(512)			#receives the packet itself
+							totalRecv += len(data)
+							randpacket = randint(0, 9)
 						# if index == 0:
 						# 	print "index zero"
 						# else:
 						# 	dict[index]=data
-						
-						print "random bit="+str(randpacket)
-						# print "dict keys are:"+ str(dict.keys())
-						if randpacket == 4: 						#lost acknowledgment 
-							print "Packet Dropped" + str(index)
-							print "dict keys are:"+ str(dict.keys())
-							totalRecv -= len(data)
-							continue
-						else:
-							dict[index]=data						#stores the packet of the given ID
-							print "acknowlegment Sent"
-							print "dict keys are:"+ str(dict.keys())
-							#data, addr = sock.recvfrom(512)
-							print totalRecv
-							f.write(data)
-							sock.sendto('acknowledged',server)
-						#flag = 0
-						print "{0:.1f}".format((totalRecv/float(filesize))*100) + "% Done"
+							print "random bit="+str(randpacket)
+							# print "dict keys are:"+ str(dict.keys())
+							if randpacket == 4: 						#lost acknowledgment 
+								print "Packet Dropped" + str(index)
+								print "dict keys are:"+ str(dict.keys())
+								totalRecv -= len(data)
+								continue
+							else:
+								dict[index]=data						#stores the packet of the given ID
+								print "acknowlegment Sent"
+								print "dict keys are:"+ str(dict.keys())
+								#data, addr = sock.recvfrom(512)
+								print totalRecv
+								if index ==0:
+									f.write(dict[index])
+									index=1
+								while index in dict.keys():
+									f.write(dict[index])
+									index=+1
+								sock.sendto('acknowledged',server)
+							#flag = 0
+							print "{0:.1f}".format((totalRecv/float(filesize))*100) + "% Done"
 					print "Download Complete!"
 
 		# 	if data == 'q':
